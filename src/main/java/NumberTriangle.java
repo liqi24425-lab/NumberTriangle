@@ -119,26 +119,39 @@ public class NumberTriangle {
 
         String line = br.readLine();
         while (line != null) {
-            String[] tokens = line.split(" ");
-            List<NumberTriangle> row = new ArrayList<>();
-            for  (int i = 0; i < tokens.length; i++) {
-                row.add(new NumberTriangle(Integer.parseInt(tokens[i])));
+            String[] numberStrings = line.split("\\s+");
+            List<NumberTriangle> currentLevel = new ArrayList<>();
+
+            for (String numStr : numberStrings) {
+                int value = Integer.parseInt(numStr);
+                currentLevel.add(new NumberTriangle(value));
             }
-            levels.add(row);
-            //read the next line
+            levels.add(currentLevel);
+
             line = br.readLine();
         }
         br.close();
-        for (int i = 0; i <= levels.size() - 1; i++) {
-            List<NumberTriangle> current = levels.get(i);
-            List<NumberTriangle> next = levels.get(i + 1);
-            for (int j = 0; j < levels.size(); j++) {
-                current.get(j).setLeft(next.get(j));
-                current.get(j).setRight(next.get(j + 1));
-            }
-
+        if (levels.isEmpty()) {
+            throw new IOException("Empty file");
         }
+
         top = levels.get(0).get(0);
+
+        for (int i = 0; i < levels.size() - 1; i++) {
+            List<NumberTriangle> currentLevel = levels.get(i);
+            List<NumberTriangle> nextLevel = levels.get(i + 1);
+
+            for (int j = 0; j < currentLevel.size(); j++) {
+                NumberTriangle currentNode = currentLevel.get(j);
+                if (j < nextLevel.size()) {
+                    currentNode.setLeft(nextLevel.get(j));
+                }
+                if (j + 1 < nextLevel.size()) {
+                    currentNode.setRight(nextLevel.get(j + 1));
+                }
+            }
+        }
+
         return top;
     }
 
